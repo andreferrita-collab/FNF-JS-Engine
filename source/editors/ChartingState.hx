@@ -1183,7 +1183,7 @@ class ChartingState extends MusicBeatState
 				{
 					var strum = note[0] + Conductor.stepCrochet * (getSectionBeats(daSec) * 4 * value);
 
-					var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3]];
+					var copiedNote:Array<Dynamic> = [strum, note[1], note[2], note[3], note[4]];
 					_song.notes[daSec].sectionNotes.push(copiedNote);
 				}
 			}
@@ -1228,13 +1228,12 @@ class ChartingState extends MusicBeatState
 					boob += 4;
 				}
 
-				var copiedNote:Array<Dynamic> = [note[0], boob, note[2], note[3]];
+				var copiedNote:Array<Dynamic> = [note[0], boob, note[2], note[3], note[4]];
 				duetNotes.push(copiedNote);
 			}
 
 			for (i in duetNotes){
-			_song.notes[curSec].sectionNotes.push(i);
-
+				_song.notes[curSec].sectionNotes.push(i);
 			}
 
 			updateGrid(false);
@@ -1249,7 +1248,7 @@ class ChartingState extends MusicBeatState
 				if (note[1] > 3) boob += 4;
 
 				note[1] = boob;
-				var copiedNote:Array<Dynamic> = [note[0], boob, note[2], note[3]];
+				var copiedNote:Array<Dynamic> = [note[0], boob, note[2], note[3], note[4]];
 				//duetNotes.push(copiedNote);
 			}
 
@@ -1348,7 +1347,7 @@ class ChartingState extends MusicBeatState
 
 					var data = note[1];
 					if (swapNotes) data = Std.int(note[1] + 4) % 8;
-					var copiedNote:Array<Dynamic> = [strum, data, note[2], note[3]];
+					var copiedNote:Array<Dynamic> = [strum, data, note[2], note[3], note[4]];
 					inline _song.notes[daSec].sectionNotes.push(copiedNote);
 				}
 					if (curSection - value1 < 0)
@@ -1394,7 +1393,7 @@ class ChartingState extends MusicBeatState
 
 					var data = note[1];
 					if (swapNotes) data = Std.int(note[1] + 4) % 8;
-					var copiedNote:Array<Dynamic> = [strum, data, note[2], note[3]];
+					var copiedNote:Array<Dynamic> = [strum, data, note[2], note[3], note[4]];
 					_song.notes[curSec].sectionNotes.push(copiedNote);
 				}
 			}
@@ -1608,6 +1607,10 @@ class ChartingState extends MusicBeatState
 	var stepperStackSideOffset:FlxUINumericStepper;
 	var stepperShrinkAmount:FlxUINumericStepper;
 
+	//so not only can i scale these, i can use these to input much higher spam numbers than ints allow
+	var compressedAmt:FlxUIInputText; 
+	var compressedDensity:FlxUIInputText; 
+
 	function addNoteStackingUI():Void
 	{
 		var tab_group_stacking = new FlxUI(null, UI_box);
@@ -1640,22 +1643,27 @@ class ChartingState extends MusicBeatState
 		stepperStackOffset.name = 'stack_offset';
 		blockPressWhileTypingOnStepper.push(stepperStackOffset);
 
-		var doubleSpamMult:FlxButton = new FlxButton(stepperStackOffset.x, stepperStackOffset.y + 20, 'x2 SM', function()
+		var doubleSpamMult:FlxButton = new FlxButton(180, stepperStackOffset.y, 'x2 SM', function()
 		{
 			stepperStackOffset.value *= 2;
 		});
+		doubleSpamMult.setGraphicSize(40, Std.int(doubleSpamMult.height));
+		doubleSpamMult.updateHitbox();
 		doubleSpamMult.color = FlxColor.GREEN;
 		doubleSpamMult.label.color = FlxColor.WHITE;
+		setAllLabelsOffset(doubleSpamMult, -20, 2.5);
 
 		var halfSpamMult:FlxButton = new FlxButton(doubleSpamMult.x + doubleSpamMult.width + 20, doubleSpamMult.y, 'x0.5 SM', function()
 		{
 			stepperStackOffset.value /= 2;
 		});
-		halfSpamMult.setGraphicSize(Std.int(halfSpamMult.width), Std.int(halfSpamMult.height));
+		halfSpamMult.setGraphicSize(Std.int(doubleSpamMult.width), Std.int(doubleSpamMult.height));
 		halfSpamMult.color = FlxColor.RED;
 		halfSpamMult.label.color = FlxColor.WHITE;
+		halfSpamMult.updateHitbox();
+		setAllLabelsOffset(halfSpamMult, -20, 2.5);
 
-		stepperStackSideOffset = new FlxUINumericStepper(10, 140, 1, 0, -9999, 9999);
+		stepperStackSideOffset = new FlxUINumericStepper(10, stepperStackOffset.y + 30, 1, 0, -9999, 9999);
 		stepperStackSideOffset.name = 'stack_sideways';
 		blockPressWhileTypingOnStepper.push(stepperStackSideOffset);
 
@@ -1663,20 +1671,25 @@ class ChartingState extends MusicBeatState
 		stepperShrinkAmount.name = 'shrinker_amount';
 		blockPressWhileTypingOnStepper.push(stepperShrinkAmount);
 
-		var doubleShrinker:FlxButton = new FlxButton(stepperShrinkAmount.x, stepperShrinkAmount.y + 20, 'x2 SH', function()
+		var doubleShrinker:FlxButton = new FlxButton(180, stepperShrinkAmount.y, 'x2 SH', function()
 		{
 			stepperShrinkAmount.value *= 2;
 		});
+		doubleShrinker.setGraphicSize(40, Std.int(doubleSpamMult.height));
+		doubleShrinker.updateHitbox();
 		doubleShrinker.color = FlxColor.GREEN;
 		doubleShrinker.label.color = FlxColor.WHITE;
+		setAllLabelsOffset(doubleShrinker, -20, 2.5);
 
 		var halfShrinker:FlxButton = new FlxButton(doubleShrinker.x + doubleShrinker.width + 20, doubleShrinker.y, 'x0.5 SH', function()
 		{
 			stepperShrinkAmount.value /= 2;
 		});
-		halfShrinker.setGraphicSize(Std.int(halfShrinker.width), Std.int(halfShrinker.height));
+		halfShrinker.setGraphicSize(Std.int(doubleShrinker.width), Std.int(doubleShrinker.height));
 		halfShrinker.color = FlxColor.RED;
 		halfShrinker.label.color = FlxColor.WHITE;
+		halfShrinker.updateHitbox();
+		setAllLabelsOffset(halfShrinker, -20, 2.5);
 
 		var shrinkNotesButton:FlxButton = new FlxButton(10, doubleShrinker.y + 30, "Stretch Notes", function()
 		{
@@ -1687,7 +1700,7 @@ class ChartingState extends MusicBeatState
 				var note:Array<Dynamic> = _song.notes[curSec].sectionNotes[i];
 				if (note[2] > 0) note[2] *= stepperShrinkAmount.value;
        				var originalStartTime:Float = note[0]; // Original start time (in seconds)
-				originalStartTime = originalStartTime - sectionStartTime();
+					originalStartTime = originalStartTime - sectionStartTime();
 
         			var stretchedStartTime:Float = originalStartTime * stepperShrinkAmount.value;
 
@@ -1696,6 +1709,14 @@ class ChartingState extends MusicBeatState
        				note[0] = Math.max(newStartTime, minimumTime);
 				if (note[0] < minimumTime) note[0] = minimumTime;
 				_song.notes[curSec].sectionNotes[i] = note;
+
+				var cmpSpam = getSpamData(note);
+
+				if (cmpSpam != null) {
+					var density:Float = cmpSpam[1];
+					density /= stepperShrinkAmount.value;
+					cmpSpam[1] = density; compressedDensity.text = Std.string(density);
+				}
 			}
 			updateGrid(false);
 		});
@@ -1732,7 +1753,7 @@ class ChartingState extends MusicBeatState
 			{
 				for (i in 0...copiedNotes.length)
 				{
-					final copiedNote:Array<Dynamic> = [copiedNotes[i][0], copiedNotes[i][1], copiedNotes[i][2], copiedNotes[i][3]];
+					final copiedNote:Array<Dynamic> = [copiedNotes[i][0], copiedNotes[i][1], copiedNotes[i][2], copiedNotes[i][3], copiedNotes[i][4]];
 					copiedNote[0] += (stepperShiftSteps.value * _i) * (15000/Conductor.bpm);
 					//yeah.. unfortunately this relies on the value of the Shift Notes stepper.. stupid but it works, so im gonna keep it this way until i find a better solution
 					_song.notes[curSec].sectionNotes.push(copiedNote);
@@ -1741,6 +1762,20 @@ class ChartingState extends MusicBeatState
 			_song.notes[curSec].sectionNotes.length <= 30000 ? updateGrid(false) : changeSection(curSec + 1); //if there's now more than 30,000 notes in the same section then uh.. change to the next section so you don't suffer a crash
 		});
 		dupeNotesButton.setGraphicSize(Std.int(dupeNotesButton.width), Std.int(dupeNotesButton.height));
+
+		var text:FlxText = new FlxText(10, dupeNotesButton.y + 30, 0, "Compressed Spam Amount");
+		tab_group_stacking.add(text);
+		compressedAmt = new FlxUIInputText(20, text.y + 20, 100, "");
+		blockPressWhileTypingOn.push(compressedAmt);
+		compressedAmt.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
+		tab_group_stacking.add(compressedAmt);
+
+		var text:FlxText = new FlxText(160, dupeNotesButton.y + 30, 0, "Compressed Spam Density");
+		tab_group_stacking.add(text);
+		compressedDensity = new FlxUIInputText(160, text.y + 20, 100, "");
+		blockPressWhileTypingOn.push(compressedDensity);
+		compressedDensity.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
+		tab_group_stacking.add(compressedDensity);
 
 		tab_group_stacking.add(check_stackActive);
 		tab_group_stacking.add(stepperStackNum);
@@ -1759,12 +1794,12 @@ class ChartingState extends MusicBeatState
 		tab_group_stacking.add(shiftNotesButton);
 		tab_group_stacking.add(dupeNotesButton);
 
-		tab_group_stacking.add(new FlxText(100, 30, 0, "Spam Count"));
-		tab_group_stacking.add(new FlxText(100, 80, 0, "Spam Multiplier"));
-		tab_group_stacking.add(new FlxText(100, 140, 0, "Spam Scroll Amount"));
-		tab_group_stacking.add(new FlxText(100, stepperShrinkAmount.y, 0, "Stretch Amount"));
-		tab_group_stacking.add(new FlxText(100, stepperShiftSteps.y, 0, "Steps to Shift By"));
-		tab_group_stacking.add(new FlxText(100, stepperDuplicateAmount.y, 0, "Amount of Duplicates"));
+		tab_group_stacking.add(new FlxText(80, 30, 0, "Spam Count"));
+		tab_group_stacking.add(new FlxText(80, 80, 0, "Spam Multiplier"));
+		tab_group_stacking.add(new FlxText(80, 110, 0, "Spam Scroll Amount"));
+		tab_group_stacking.add(new FlxText(80, stepperShrinkAmount.y, 0, "Stretch Amount"));
+		tab_group_stacking.add(new FlxText(80, stepperShiftSteps.y, 0, "Steps to Shift By"));
+		tab_group_stacking.add(new FlxText(80, stepperDuplicateAmount.y, 0, "Amount of Duplicates"));
 
 		UI_box.addGroup(tab_group_stacking);
 	}
@@ -2515,6 +2550,10 @@ class ChartingState extends MusicBeatState
 		difficulty = UI_songDiff.text.toLowerCase();
 		specialAudioName = _song.specialAudioName = UI_specAudio.text.toLowerCase();
 		specialEventsName = _song.specialEventsName = UI_specEvents.text.toLowerCase();
+		var amt = Std.parseFloat(compressedAmt.text);
+		var density = Std.parseFloat(compressedDensity.text);
+		if (curSelectedNote != null && !(Math.isNaN(amt) || Math.isNaN(density)))
+			setSpamData(curSelectedNote, amt, density);
 
 		if (idleMusic != null && idleMusic.music != null && idleMusic.music.playing && !idleMusicAllow) idleMusic.pauseMusic();
 
@@ -3658,7 +3697,7 @@ class ChartingState extends MusicBeatState
 		if (curSelectedNote != null) {
 			if(curSelectedNote[2] != null) {
 				stepperSusLength.value = curSelectedNote[2];
-				if(curSelectedNote[3] != null) {
+				if(Std.isOfType(curSelectedNote[3], String)) {
 					currentType = noteTypeMap.get(curSelectedNote[3]);
 					if(currentType <= 0) {
 						noteTypeDropDown.selectedLabel = '';
@@ -3762,7 +3801,7 @@ class ChartingState extends MusicBeatState
 					curRenderedSustains.add(setupSusNote(note, beats));
 				}
 
-				if(i[3] != null && note.noteType != null && note.noteType.length > 0) {
+				if(Std.isOfType(i[3], String) && note.noteType != null && note.noteType.length > 0) {
 					var typeInt:Null<Int> = noteTypeMap.get(i[3]);
 					var theType:String = '' + typeInt;
 					if(typeInt == null) theType = '?';
@@ -3855,14 +3894,29 @@ class ChartingState extends MusicBeatState
 		note.strumTime = daStrumTime;
 		note.noteData = daNoteInfo % 4;
 		if(daSus != null) { //Common note
-			if(!Std.isOfType(i[3], String)) //Convert old note type to new note type format
+			if(i[3] != null && !Std.isOfType(i[3], String) && !Std.isOfType(i[3], Array)) //Convert old note type to new note type format
 			{
 				i[3] = noteTypeIntMap.get(i[3]);
 			}
-			if(i.length > 3 && (i[3] == null || i[3].length < 1))
-			{
-				i.remove(i[3]);
+
+			function isEmptySpamField(field:Dynamic):Bool {
+				if (field == null) return true;
+				
+				if (Std.isOfType(field, String) || Std.isOfType(field, Array))
+					return (cast field).length < 1;
+
+				if (Reflect.hasField(field, "cmpSpam")) {
+					var bd = Reflect.field(field, "cmpSpam");
+					if (bd == null) return true;
+					if (Std.isOfType(bd, Array)) return (cast bd).length < 1;
+				}
+
+				return false;
 			}
+
+			if (i.length > 4 && isEmptySpamField(i[4])) i.splice(4, 1);
+			if (i.length > 3 && isEmptySpamField(i[3])) i.splice(3, 1);
+
 			note.sustainLength = daSus;
 			note.noteType = i[3];
 			note.animation.play(Note.colArray[daNoteInfo % 4] + 'Scroll');
@@ -3957,6 +4011,20 @@ class ChartingState extends MusicBeatState
 				if (i != curSelectedNote && i.length > 2 && i[0] == note.strumTime && i[1] == noteDataToCheck)
 				{
 					curSelectedNote = i;
+					var cmpSpamArr = getSpamData(curSelectedNote);
+					if (cmpSpamArr != null) {
+						compressedAmt.text = Std.string(cmpSpamArr[0]);
+						compressedDensity.text = Std.string(cmpSpamArr[1]);
+					} else {
+						for (slot in [3,4]) {
+							var cmpSpam = curSelectedNote[slot];
+							if (cmpSpam != null && Std.isOfType(cmpSpam, Array) || (Reflect.hasField(cmpSpam, "cmpSpam"))) {
+								curSelectedNote.splice(slot, 1);
+								break;
+							}
+						}
+						compressedAmt.text = compressedDensity.text = '';
+					}
 					break;
 				}
 			}
@@ -3976,8 +4044,8 @@ class ChartingState extends MusicBeatState
 		changeEventSelected();
 
 		if (updateTheGrid) {
-		updateGrid(false);
-		updateNoteUI();
+			updateGrid(false);
+			updateNoteUI();
 		}
 	}
 
@@ -4072,6 +4140,7 @@ class ChartingState extends MusicBeatState
 		updateGrid();
 	}
 
+	var pushedNote:Array<Dynamic> = null;
 	private function addNote(strum:Null<Float> = null, data:Null<Int> = null, type:Null<Int> = null, ?gridUpdate:Bool = true):Void
 	{
 		var noteStrum = getStrumTime(selectionNote.y * (getSectionBeats() / 4), false) + sectionStartTime();
@@ -4079,6 +4148,9 @@ class ChartingState extends MusicBeatState
 		var noteSus = 0;
 		var daAlt = false;
 		var daType = currentType;
+
+		var amt = Std.parseFloat(compressedAmt.text);
+		var density = Std.parseFloat(compressedDensity.text);
 
 		if (strum != null) noteStrum = strum;
 		if (data != null) noteData = data;
@@ -4088,6 +4160,9 @@ class ChartingState extends MusicBeatState
 		{
 			_song.notes[curSec].sectionNotes.push([noteStrum, noteData, noteSus, noteTypeIntMap.get(daType)]);
 			curSelectedNote = _song.notes[curSec].sectionNotes[_song.notes[curSec].sectionNotes.length - 1];
+			if (!Math.isNaN(amt) && !Math.isNaN(density)) {
+				setSpamData(curSelectedNote, amt, density);
+			}
 		}
 		else
 		{
@@ -4100,10 +4175,15 @@ class ChartingState extends MusicBeatState
 		}
 		changeEventSelected();
 
-		if (FlxG.keys.pressed.CONTROL && noteData > -1)
-		{
-			_song.notes[curSec].sectionNotes.push([noteStrum, (noteData + 4) % 8, noteSus, noteTypeIntMap.get(daType)]);
-			updateGrid();
+		if (FlxG.keys.pressed.CONTROL && noteData > -1) {
+			gridUpdate = false;
+			pushedNote = ([noteStrum, (noteData + 4) % 8, noteSus, noteTypeIntMap.get(daType)]);
+
+			if (!Math.isNaN(amt) && !Math.isNaN(density)) {
+				setSpamData(pushedNote, amt, density);
+			}
+			_song.notes[curSec].sectionNotes.push(pushedNote);
+			updateGrid(false);
 		}
 
 		strumTimeInputText.text = '' + curSelectedNote[0];
@@ -4135,7 +4215,7 @@ class ChartingState extends MusicBeatState
 						curRenderedSustains.add(setupSusNote(note, beats));
 					}
 
-					if(curSelectedNote[3] != null && note.noteType != null && note.noteType.length > 0) {
+					if(Std.isOfType(curSelectedNote[3], String) && note.noteType.length > 0) {
 						var typeInt:Null<Int> = noteTypeMap.get(curSelectedNote[3]);
 						var theType:String = '' + typeInt;
 						if(typeInt == null) theType = '?';
@@ -4154,6 +4234,57 @@ class ChartingState extends MusicBeatState
 			updateNoteUI();
 		}
 		unsavedChanges = true;
+	}
+
+	/**
+	* Returns the burst data array from a note in any supported format.
+	* Returns null if no burst data is found.
+	*/
+	function getSpamData(note:Array<Dynamic>):Array<Float>
+	{
+		if (note == null) return null;
+
+		for (slot in [3, 4]) {
+			var spamField = note[slot];
+
+			if (Std.isOfType(spamField, Array)) {
+				return cast spamField;
+			}
+			else if (spamField != null && Reflect.hasField(spamField, "cmpSpam")) {
+				var bd = Reflect.field(spamField, "cmpSpam");
+				if (Std.isOfType(bd, Array)) return cast bd;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	* Sets the burst data array on a note in the correct format and slot.
+	* If burst data already exists (old array or new object), it updates it.
+	* Otherwise, it creates a new object with spamData on the first available slot (3 or 4).
+	*/
+	function setSpamData(note:Array<Dynamic>, amt:Float, density:Float):Void {
+		if (note == null) return;
+
+		for (slot in [3, 4]) {
+			var spamField = note[slot];
+
+			if (Std.isOfType(spamField, Array)) {
+				note[slot] = [amt, density];
+				return;
+			}
+			else if (spamField != null && Reflect.hasField(spamField, "cmpSpam")) {
+				Reflect.setField(spamField, "cmpSpam", [amt, density]);
+				return;
+			}
+			else if (spamField == null) {
+				note[slot] = { cmpSpam: [amt, density] };
+				return;
+			}
+		}
+
+		note[3] = { cmpSpam: [amt, density] };
 	}
 
 	// will figure this out l8r
