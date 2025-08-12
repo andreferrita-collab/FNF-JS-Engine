@@ -3894,28 +3894,19 @@ class ChartingState extends MusicBeatState
 		note.strumTime = daStrumTime;
 		note.noteData = daNoteInfo % 4;
 		if(daSus != null) { //Common note
-			if(i[3] != null && !Std.isOfType(i[3], String) && !Std.isOfType(i[3], Array)) //Convert old note type to new note type format
+			if(i[3] != null && !Std.isOfType(i[3], String) && i[3].cmpSpam == null) //Convert old note type to new note type format
 			{
 				i[3] = noteTypeIntMap.get(i[3]);
 			}
+			
+			if(i.length > 3)
+			{
+				if (i[4] == null || i[4].cmpSpam == null)
+					i.remove(i[4]);
 
-			function isEmptySpamField(field:Dynamic):Bool {
-				if (field == null) return true;
-				
-				if (Std.isOfType(field, String) || Std.isOfType(field, Array))
-					return (cast field).length < 1;
-
-				if (Reflect.hasField(field, "cmpSpam")) {
-					var bd = Reflect.field(field, "cmpSpam");
-					if (bd == null) return true;
-					if (Std.isOfType(bd, Array)) return (cast bd).length < 1;
-				}
-
-				return false;
+				if (i[3] == null || i[3].length < 1)
+					i.remove(i[3]);
 			}
-
-			if (i.length > 4 && isEmptySpamField(i[4])) i.splice(4, 1);
-			if (i.length > 3 && isEmptySpamField(i[3])) i.splice(3, 1);
 
 			note.sustainLength = daSus;
 			note.noteType = i[3];
