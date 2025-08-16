@@ -1414,7 +1414,7 @@ class ChartingState extends MusicBeatState
 			var endSec:Int = Std.int(deleteSecEnd.value);
 			var sectionsToDelete:Int = endSec - startSec;
 			if(sectionsToDelete < 0) {
-			return;
+				return;
 			}
 			saveUndo(_song); //I don't even know why.
 
@@ -1435,7 +1435,9 @@ class ChartingState extends MusicBeatState
 							b--;
 						}
 					}
+					
 			}
+			updateGrid(); //i guess
 		});
 		deleteSections.color = FlxColor.YELLOW;
 		deleteSections.label.color = FlxColor.WHITE;
@@ -1695,6 +1697,7 @@ class ChartingState extends MusicBeatState
 		{
 			var minimumTime:Float = sectionStartTime();
 			var sectionEndTime:Float = sectionStartTime(1);
+			var newDensity = 0.0;
 			for (i in 0..._song.notes[curSec].sectionNotes.length)
 			{
 				var note:Array<Dynamic> = _song.notes[curSec].sectionNotes[i];
@@ -1715,6 +1718,8 @@ class ChartingState extends MusicBeatState
 				if (cmpSpam != null) {
 					var density:Float = cmpSpam[1];
 					density /= stepperShrinkAmount.value;
+					if (newDensity == 0.0) newDensity = density;
+					density = Math.max(Math.min(density, newDensity), newDensity);
 					cmpSpam[1] = density; compressedDensity.text = Std.string(density);
 				}
 			}
