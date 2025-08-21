@@ -671,16 +671,10 @@ class CharacterEditorState extends MusicBeatState
 		imageInputText.focusGained = () -> FlxG.stage.window.textInputEnabled = true;
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
 		{
-			if (sys.FileSystem.exists(Paths.modsImages(imageInputText.text)) || sys.FileSystem.exists('assets/shared/images/' + imageInputText.text))
-			{
-				char.imageFile = imageInputText.text;
-				reloadCharacterImage();
-				if(char.animation.curAnim != null) {
-					char.playAnim(char.animation.curAnim.name, true);
-				}
-			} else {
-				trace ("mods/" + Paths.currentModDirectory + '/images/' + imageInputText.text + ".png or assets/shared/images/" + imageInputText.text + ".png couldn't be found!");
-				CoolUtil.coolError("The image/XML you tried to load couldn't be found!\nEither it doesn't exist, or the name doesn't match with the one you're putting?", "JS Engine Anti-Crash Tool");
+			char.imageFile = imageInputText.text;
+			reloadCharacterImage();
+			if(char.animation.curAnim != null) {
+				char.playAnim(char.animation.curAnim.name, true);
 			}
 		});
 
@@ -1153,7 +1147,7 @@ class CharacterEditorState extends MusicBeatState
 			}
 			char.isAnimateAtlas = true;
 		}
-		else
+		else if (Paths.fileExists('images/' + char.imageFile + '.png', IMAGE))
 		{
 			var split:Array<String> = char.imageFile.split(',');
 			var charFrames:FlxAtlasFrames = Paths.getAtlas(split[0].trim());
@@ -1171,6 +1165,9 @@ class CharacterEditorState extends MusicBeatState
 				}
 			}
 			char.frames = charFrames;
+		} else {
+			trace ("The png file the game looked for wasn't found!");
+			CoolUtil.coolError("The image/XML/Atlas files you tried to load couldn't be found!\nEither it doesn't exist, or the name doesn't match with the one you're putting?", "JS Engine Anti-Crash Tool");
 		}
 
 		for (anim in anims) {
