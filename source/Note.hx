@@ -214,6 +214,25 @@ class Note extends FlxSprite
 		return value;
 	}
 
+	public function toJson(){
+		return Json.stringify({
+			type:"Note",
+			strumTime:strumTime,
+			noteData:noteData,
+			noteType:noteType,
+			mustPress:mustPress
+		});
+	}
+	public override function toString(){
+		return Std.string({
+			type:"Note",
+			strumTime:strumTime,
+			noteData:noteData,
+			noteType:noteType,
+			mustPress:mustPress
+		});
+	}
+
 	public function new(?newStrumTime:Float, ?newNoteData:Int)
 	{
 		super();

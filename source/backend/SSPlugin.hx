@@ -8,8 +8,6 @@ import openfl.display.BitmapData;
 import openfl.display.Sprite;
 import openfl.utils.ByteArray;
 
-#if sys
-#end
 #if android
 import android.widget.Toast;
 #end

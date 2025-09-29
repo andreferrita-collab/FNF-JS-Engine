@@ -389,8 +389,6 @@ class PlayState extends MusicBeatState
 	//cam panning
 	var moveCamTo:HaxeVector<Float> = new HaxeVector(2);
 
-	var getTheBotplayText:Int = 0;
-
 	var theListBotplay:Array<String> = [];
 
 	var formattedScore:String;
@@ -2351,7 +2349,7 @@ class PlayState extends MusicBeatState
 	var comboInfo = ClientPrefs.showComboInfo;
 	var showNPS = ClientPrefs.showNPS;
 	var missString:String = '';
-	public function updateScore(miss:Bool = false)
+	public dynamic function updateScore(miss:Bool = false)
 	{
 		scoreTxtUpdateFrame++;
 		if (!scoreTxt.visible || scoreTxt == null)
@@ -2553,7 +2551,6 @@ class PlayState extends MusicBeatState
 		}});
 	}
 
-	var debugNum:Int = 0;
 	var stair:Int = 0;
 	var firstNoteData:Int = 0;
 	var assignedFirstData:Bool = false;
@@ -2786,7 +2783,7 @@ class PlayState extends MusicBeatState
 								missHealth: swagNote.missHealth,
 								wasHit: false,
 								multSpeed: 1,
-								multAlpha: 1,	
+								multAlpha: 1,
 								noteDensity: currentMultiplier,
 								hitCausesMiss: swagNote.hitCausesMiss,
 								ignoreNote: swagNote.ignoreNote
@@ -5028,8 +5025,16 @@ class PlayState extends MusicBeatState
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = getKeyFromEvent(eventKey);
 
-		if (!ClientPrefs.controllerMode && FlxG.keys.checkStatus(eventKey, JUST_PRESSED))
-			keyPressed(key);
+		if (!ClientPrefs.controllerMode){
+			#if debug
+			// Prevents crash specifically on debug without needing to try catch shit
+			@:privateAccess if (!FlxG.keys._keyListMap.exists(eventKey))
+				return;
+			#end
+
+			if (FlxG.keys.checkStatus(eventKey, JUST_PRESSED))
+				keyPressed(key);
+		}
 	}
 
 	public var strumsBlocked:Array<Bool> = [];
@@ -5040,7 +5045,8 @@ class PlayState extends MusicBeatState
 
 		//more accurate hit time for the ratings?
 		var lastTime:Float = Conductor.songPosition;
-		Conductor.songPosition = FlxG.sound.music.time;
+		if (Conductor.songPosition >= 0)
+			Conductor.songPosition = FlxG.sound.music.time;
 
 		var canMiss:Bool = !ClientPrefs.ghostTapping;
 
@@ -5260,6 +5266,8 @@ class PlayState extends MusicBeatState
 	function noteMiss(daNote:Note = null, daNoteAlt:PreloadedChartNote = null):Void { //You didn't hit the key and let it go offscreen, also used by Hurt Notes
 		if (daNote != null)
 		{
+			// trace(daNote.toString());
+
 			if (combo > 0)
 				combo = 0;
 			else combo -= 1 * (opponentChart ? polyphonyOppo : polyphonyBF);
