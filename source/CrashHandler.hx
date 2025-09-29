@@ -77,7 +77,9 @@ class CrashHandler
 		"Five big booms. BOOM, BOOM, BOOM, BOOM, BOOM!!!!!!!!!!",
 		"uhhhhhhhhhhhhhhhh... i dont think this is normal...",
 		"lobotomy moment",
-		"ARK: Survival Evolved"
+		"ARK: Survival Evolved",
+		"my names JS Engine, and I'm an crashaholic",
+		"JS, more like buggy engine lol"
 	];
 
 	public static function init():Void
