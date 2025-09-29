@@ -1,7 +1,6 @@
 package;
 
 // an fully working crash handler on ALL platforms
-
 import flixel.FlxState;
 import haxe.CallStack;
 import haxe.io.Path;
@@ -13,18 +12,84 @@ import openfl.events.UncaughtErrorEvent;
 /**
  * Crash Handler.
  * @author YoshiCrafter29 and MAJigsaw77
-*/
-
-class CrashHandler {
+ */
+class CrashHandler
+{
 	public static var errorMessage:String = "";
 
-	public static function init():Void {
+	static final __superCoolErrorMessagesArray:Array<String> = [
+		"A fatal error has occ- wait what?",
+		"missigno.",
+		"oopsie daisies!! you did a fucky wucky!!",
+		"i think you fogot a semicolon",
+		"null balls reference",
+		"get friday night funkd'",
+		"engine skipped a heartbeat",
+		"Impossible...",
+		"Patience is key for success... Don't give up.",
+		"It's no longer in its early stages... is it?",
+		"It took me half a day to code that in",
+		"You should make an issue... NOW!!",
+		"> Crash Handler written by: yoshicrafter29",
+		"broken ch-... wait what are we talking about",
+		"could not access variable you.dad",
+		"What have you done...",
+		"THERE ARENT COUGARS IN SCRIPTING!!! I HEARD IT!!",
+		"no, thats not from system.windows.forms",
+		"you better link a screenshot if you make an issue, or at least the crash.txt",
+		"stack trace more like dunno i dont have any jokes",
+		"oh the misery. everybody wants to be my enemy",
+		"have you heard of soulles dx",
+		"i thought it was invincible",
+		"did you deleted coconut.png",
+		"have you heard of missing json's cousin null function reference",
+		"sad that linux users wont see this banger of a crash handler",
+		"woopsie",
+		"oopsie",
+		"woops",
+		"silly me",
+		"my bad",
+		"first time, huh?",
+		"did somebody say yoga",
+		"we forget a thousand things everyday... make sure this is one of them.",
+		"SAY GOODBYE TO YOUR KNEECAPS, CHUCKLEHEAD",
+		"motherfucking ordinal 344 (TaskDialog) forcing me to create a even fancier window",
+		"Died due to missing a sawblade. (Press Space to dodge!)",
+		"yes rico, kaboom.",
+		"hey, while in freeplay, press shift while pressing space",
+		"goofy ahh engine",
+		"pssst, try typing debug7 in the options menu",
+		"this crash handler is sponsored by rai-",
+		"",
+		"did you know a jiffy is an actual measurement of time",
+		"how many hurt notes did you put",
+		"FPS: 0",
+		"\r\ni am a secret message",
+		"this is garnet",
+		"Error: Sorry i already have a girlfriend",
+		"did you know theres a total of 51 silly messages",
+		"whoopsies looks like i forgot to fix this",
+		"Game used Crash. It's super effective!",
+		"What in the fucking shit fuck dick!",
+		"The engine got constipated. Sad.",
+		"shit.",
+		"NULL",
+		"Five big booms. BOOM, BOOM, BOOM, BOOM, BOOM!!!!!!!!!!",
+		"uhhhhhhhhhhhhhhhh... i dont think this is normal...",
+		"lobotomy moment",
+		"ARK: Survival Evolved"
+	];
+
+	public static function init():Void
+	{
 		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onUncaughtError);
 		untyped __global__.__hxcpp_set_critical_error_handler(onError);
 	}
 
-	private static function onUncaughtError(e:UncaughtErrorEvent):Void {
-		try {
+	private static function onUncaughtError(e:UncaughtErrorEvent):Void
+	{
+		try
+		{
 			e.preventDefault();
 			e.stopPropagation();
 			e.stopImmediatePropagation();
@@ -32,10 +97,13 @@ class CrashHandler {
 			errorMessage = "";
 
 			var m:String = e.error;
-			if (Std.isOfType(e.error, Error)) {
+			if (Std.isOfType(e.error, Error))
+			{
 				var err = cast(e.error, Error);
 				m = '${err.message}';
-			} else if (Std.isOfType(e.error, ErrorEvent)) {
+			}
+			else if (Std.isOfType(e.error, ErrorEvent))
+			{
 				var err = cast(e.error, ErrorEvent);
 				m = '${err.text}';
 			}
@@ -50,17 +118,24 @@ class CrashHandler {
 
 			path = "crash/JSEngine_" + dateNow + ".log";
 
-			for(stackItem in stack) {
-				switch(stackItem) {
-					case CFunction: stackLabelArr.push("Non-Haxe (C) Function");
-					case Module(c): stackLabelArr.push('Module ${c}');
+			for (stackItem in stack)
+			{
+				switch (stackItem)
+				{
+					case CFunction:
+						stackLabelArr.push("Non-Haxe (C) Function");
+					case Module(c):
+						stackLabelArr.push('Module ${c}');
 					case FilePos(parent, file, line, col):
-						switch(parent) {
+						switch (parent)
+						{
 							case Method(cla, func): stackLabelArr.push('${file.replace('.hx', '')}.$func() [line $line]');
 							case _: stackLabelArr.push('${file.replace('.hx', '')} [line $line]');
 						}
-					case LocalFunction(v): stackLabelArr.push('Local Function ${v}');
-					case Method(cl, m): stackLabelArr.push('${cl} - ${m}');
+					case LocalFunction(v):
+						stackLabelArr.push('Local Function ${v}');
+					case Method(cl, m):
+						stackLabelArr.push('${cl} - ${m}');
 				}
 			}
 			stackLabel = stackLabelArr.join('\r\n');
@@ -68,34 +143,53 @@ class CrashHandler {
 			errorMessage += 'Uncaught Error: $m\n\n$stackLabel';
 			trace(errorMessage);
 
-			try {
-				if (!FileSystem.exists("crash/")) FileSystem.createDirectory("crash/");
+			try
+			{
+				if (!FileSystem.exists("crash/"))
+					FileSystem.createDirectory("crash/");
 				File.saveContent(path, '$errorMessage\n\nCrash Happened on JS Engine v${MainMenuState.psychEngineJSVersionNumber}!');
-			} catch(e) trace('Couldn\'t save error message. (${e.message})');
+			}
+			catch (e)
+				trace('Couldn\'t save error message. (${e.message})');
 
 			Sys.println(errorMessage);
 			Sys.println("Crash dump saved in " + Path.normalize(path));
-		} catch(e:Dynamic) trace(e);
+		}
+		catch (e:Dynamic)
+			trace(e);
 
 		FlxTransitionableState.skipNextTransIn = true;
 		FlxTransitionableState.skipNextTransOut = false;
 
-		if (ClientPrefs.peOGCrash) {
+		if (ClientPrefs.peOGCrash)
+		{
 			errorMessage += "\n\nPlease report this error to the GitHub page: https://github.com/JordanSantiagoYT/FNF-JS-Engine"
-			+ "\nThe engine has saved a crash log inside the crash folder, If you're making a GitHub issue you might want to send that!";
+				+ "\nThe engine has saved a crash log inside the crash folder, If you're making a GitHub issue you might want to send that!";
 
-			CoolUtil.showPopUp(errorMessage, "Error! JS Engine v" + MainMenuState.psychEngineJSVersion + " (" + Main.__superCoolErrorMessagesArray[FlxG.random.int(0, Main.__superCoolErrorMessagesArray.length)] + ")");
+			CoolUtil.showPopUp(errorMessage,
+				"Error! JS Engine v"
+				+ MainMenuState.psychEngineJSVersion
+				+ " ("
+				+ __superCoolErrorMessagesArray[FlxG.random.int(0, __superCoolErrorMessagesArray.length)]
+				+ ")");
 
 			lime.system.System.exit(1);
-		} else FlxG.switchState(Crash.new);
+		}
+		else
+			FlxG.switchState(Crash.new);
 	}
 
-    private static function onError(message:Dynamic):Void throw Std.string(message);
+	private static function onError(message:Dynamic):Void
+		throw Std.string(message);
 }
 
-class Crash extends MusicBeatState {
-	override public function create() {
-		if (FlxG.sound.music != null) FlxG.sound.music.stop();
+@:access(CrashHandler)
+class Crash extends MusicBeatState
+{
+	override public function create()
+	{
+		if (FlxG.sound.music != null)
+			FlxG.sound.music.stop();
 
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.color = 0xFF232323;
@@ -108,7 +202,7 @@ class Crash extends MusicBeatState {
 		ohNo.y = 14;
 		add(ohNo);
 
-		var ohNo2:FlxText = new FlxText(0, 0, 1280, Main.__superCoolErrorMessagesArray[FlxG.random.int(0, Main.__superCoolErrorMessagesArray.length)]);
+		var ohNo2:FlxText = new FlxText(0, 0, 1280, CrashHandler.__superCoolErrorMessagesArray[FlxG.random.int(0, CrashHandler.__superCoolErrorMessagesArray.length)]);
 		ohNo2.setFormat(Paths.font('vcr.ttf'), 18, FlxColor.WHITE, FlxTextAlign.CENTER);
 		ohNo2.alpha = 0;
 		ohNo2.screenCenter();
@@ -123,7 +217,8 @@ class Crash extends MusicBeatState {
 		ohNo3.x = 30;
 		add(ohNo3);
 
-		var ohNo4:FlxText = new FlxText(0, 0, 1280, "If you are reporting this bug, Press [F2] to screenshot that error or\nGo to crash/ folder and copy the contents from the recent file.");
+		var ohNo4:FlxText = new FlxText(0, 0, 1280,
+			"If you are reporting this bug, Press [F2] to screenshot that error or\nGo to crash/ folder and copy the contents from the recent file.");
 		ohNo4.setFormat(Paths.font('vcr.ttf'), 22, FlxColor.WHITE, FlxTextAlign.CENTER);
 		ohNo4.alpha = 0;
 		ohNo4.screenCenter();
@@ -134,7 +229,8 @@ class Crash extends MusicBeatState {
 		var i:Int = -1;
 		var crash:Array<FlxText> = [];
 
-		for (line in stripClub) {
+		for (line in stripClub)
+		{
 			i++;
 			crash.push(new FlxText(180, 0, 1280, line));
 			crash[i].setFormat(Paths.font('vcr.ttf'), 20, FlxColor.WHITE, FlxTextAlign.LEFT);
@@ -157,7 +253,8 @@ class Crash extends MusicBeatState {
 		FlxTween.tween(ohNo3, {alpha: 0.25}, 0.5);
 		FlxTween.tween(ohNo4, {alpha: 1}, 0.5);
 		FlxTween.tween(tip, {alpha: 1}, 0.5);
-		for (spr in crash) FlxTween.tween(spr, {alpha: 1}, 0.5);
+		for (spr in crash)
+			FlxTween.tween(spr, {alpha: 1}, 0.5);
 
 		var error:FlxSound = FlxG.sound.load(Paths.sound('error'));
 		error.play();
@@ -171,42 +268,46 @@ class Crash extends MusicBeatState {
 	// -nael2xd
 	var countDown:Int = 10;
 	var clicked:Bool = false;
-	override public function update(elapsed:Float) if (FlxG.keys.justPressed.ANY && !clicked) {
-		FlxTransitionableState.skipNextTransIn = false;
 
-		if (FlxG.keys.justPressed.ENTER) {
-			clicked = true;
-			for (sprite in members) if (sprite is FlxSprite || sprite is FlxText) FlxTween.tween(sprite, {alpha: 0.5}, 0.5);
-
-			var coolBg:FlxSprite = new FlxSprite().makeGraphic(840, 260, 0xFF404040);
-			coolBg.screenCenter();
-			add(coolBg);
-
-			var coolInfo:FlxSprite = new FlxSprite().makeGraphic(830, 250, 0xFF636363);
-			coolInfo.screenCenter();
-			add(coolInfo);
-
-			var heyText:FlxText = new FlxText(0, 0, 820, "Before you report the crash, Please check if one of those crash exists. If it does exist yet you make the issue, it will be marked as duplicate!");
-			heyText.setFormat(Paths.font('vcr.ttf'), 34, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			heyText.screenCenter();
-			heyText.y -= 50;
-			add(heyText);
-
-			var countText:FlxText = new FlxText(0, 0, 640, "" + countDown);
-			countText.setFormat(Paths.font('vcr.ttf'), 90, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			countText.screenCenter();
-			countText.y += 73;
-			add(countText);
-
-			new FlxTimer().start(1, e -> {
-				countDown--;
-				countText.text = countDown + "";
-
-				if (countDown == 0) {
-					CoolUtil.browserLoad("https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/new?template=bugs.yml");
-					FlxG.switchState(MainMenuState.new);
-				}
-			}, 10);
-		} else if (!FlxG.keys.justPressed.F2) FlxG.switchState(MainMenuState.new);
-	}
+	override public function update(elapsed:Float)
+		if (FlxG.keys.justPressed.ANY && !clicked)
+		{
+			FlxTransitionableState.skipNextTransIn = false;
+			if (FlxG.keys.justPressed.ENTER)
+			{
+				clicked = true;
+				for (sprite in members)
+					if (sprite is FlxSprite || sprite is FlxText)
+						FlxTween.tween(sprite, {alpha: 0.5}, 0.5);
+				var coolBg:FlxSprite = new FlxSprite().makeGraphic(840, 260, 0xFF404040);
+				coolBg.screenCenter();
+				add(coolBg);
+				var coolInfo:FlxSprite = new FlxSprite().makeGraphic(830, 250, 0xFF636363);
+				coolInfo.screenCenter();
+				add(coolInfo);
+				var heyText:FlxText = new FlxText(0, 0, 820,
+					"Before you report the crash, Please check if one of those crash exists. If it does exist yet you make the issue, it will be marked as duplicate!");
+				heyText.setFormat(Paths.font('vcr.ttf'), 34, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				heyText.screenCenter();
+				heyText.y -= 50;
+				add(heyText);
+				var countText:FlxText = new FlxText(0, 0, 640, "" + countDown);
+				countText.setFormat(Paths.font('vcr.ttf'), 90, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				countText.screenCenter();
+				countText.y += 73;
+				add(countText);
+				new FlxTimer().start(1, e ->
+				{
+					countDown--;
+					countText.text = countDown + "";
+					if (countDown == 0)
+					{
+						CoolUtil.browserLoad("https://github.com/JordanSantiagoYT/FNF-JS-Engine/issues/new?template=bugs.yml");
+						FlxG.switchState(MainMenuState.new);
+					}
+				}, 10);
+			}
+			else if (!FlxG.keys.justPressed.F2)
+				FlxG.switchState(MainMenuState.new);
+		}
 }
