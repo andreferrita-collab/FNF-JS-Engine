@@ -44,7 +44,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var missRating:Bool = false;
 	public static var noteColorStyle:String = 'Normal';
 	public static var enableColorShader:Bool = true;
-	public static var iconBopWhen:String = 'Every Beat';
 	public static var rateNameStuff:String = 'Quotes';
 	public static var timeBarType:String = 'Time Left';
 	public static var scoreStyle:String = 'Psych Engine';
@@ -60,7 +59,6 @@ class ClientPrefs { //default settings if it can't find a save file containing y
 	public static var iconBounceType:String = 'New Psych';
 	public static var smoothHealth:Bool = true;
 	public static var smoothHPBug:Bool = false;
-	public static var noBopLimit:Bool = false;
 	public static var ogHPColor:Bool = false;
 	public static var flashing:Bool = true;
 	public static var camZooms:Bool = true;

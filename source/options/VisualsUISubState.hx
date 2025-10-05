@@ -185,14 +185,6 @@ class VisualsUISubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 
-		var option:Option = new Option('Icon Bop Trigger:',
-			"When would you like the icons to bop?",
-			'iconBopWhen',
-			'string',
-			'Every Beat',
-			['Every Beat', 'Every Note Hit']);
-		addOption(option);
-
 		var ratingQuoteList:Array<String> = Paths.mergeAllTextsNamed('data/ratingQuotes/list.txt', '', true);
 		if (ratingQuoteList.length > 0)
 		{
@@ -319,13 +311,6 @@ class VisualsUISubState extends BaseOptionsMenu
 		var option:Option = new Option('Smooth Health Bug',
 			'This was too cool to be removed, apparently.\nIf checked the icons will be able to go past the normal boundaries of the health bar.',
 			'smoothHPBug',
-			'bool',
-			false);
-		addOption(option);
-
-		var option:Option = new Option('No Icon Bop Limiter',
-			'Another comedic option that is hilarious when turned on.\nWhen enabled, disables the Icon Bop limiter which..\nleads to some interesting visuals when spam happens.',
-			'noBopLimit',
 			'bool',
 			false);
 		addOption(option);

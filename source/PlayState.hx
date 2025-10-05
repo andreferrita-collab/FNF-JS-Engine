@@ -171,8 +171,6 @@ class PlayState extends MusicBeatState
 	var eventIndex:Int = 0;
 	var notesToRemoveCount:Int = 0;
 	var oppNotesToRemoveCount:Int = 0;
-	public var iconBopsThisFrame:Int = 0;
-	public var iconBopsTotal:Int = 0;
 
 	var endingTimeLimit:Int = 20;
 
@@ -3751,48 +3749,39 @@ class PlayState extends MusicBeatState
 	// Health icon updaters
 	public dynamic function updateIconsScale(elapsed:Float)
 	{
-		if (ClientPrefs.iconBounceType == 'Old Psych') {
-			iconP1.setGraphicSize(Std.int(FlxMath.lerp(iconP1.frameWidth, iconP1.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))),
-				Std.int(FlxMath.lerp(iconP1.frameHeight, iconP1.height, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
-			iconP2.setGraphicSize(Std.int(FlxMath.lerp(iconP2.frameWidth, iconP2.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))),
-				Std.int(FlxMath.lerp(iconP2.frameHeight, iconP2.height, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
-		}
-		if (ClientPrefs.iconBounceType == 'Strident Crisis') {
-			iconP1.setGraphicSize(Std.int(FlxMath.lerp(iconP1.frameWidth, iconP1.width, 0.50 / playbackRate)),
-				Std.int(FlxMath.lerp(iconP1.frameHeight, iconP1.height, 0.50 / playbackRate)));
-			iconP2.setGraphicSize(Std.int(FlxMath.lerp(iconP2.frameWidth, iconP2.width, 0.50 / playbackRate)),
-				Std.int(FlxMath.lerp(iconP2.frameHeight, iconP1.height, 0.50 / playbackRate)));
-			iconP1.updateHitbox();
-			iconP2.updateHitbox();
-		}
-		if (ClientPrefs.iconBounceType == 'Dave and Bambi') {
-			iconP1.setGraphicSize(Std.int(FlxMath.lerp(iconP1.frameWidth, iconP1.width, 0.8 / playbackRate)),
-				Std.int(FlxMath.lerp(iconP1.frameHeight, iconP1.height, 0.8 / playbackRate)));
-			iconP2.setGraphicSize(Std.int(FlxMath.lerp(iconP2.frameWidth, iconP2.width, 0.8 / playbackRate)),
-				Std.int(FlxMath.lerp(iconP2.frameHeight, iconP2.height, 0.8 / playbackRate)));
-		}
-		if (ClientPrefs.iconBounceType == 'Plank Engine') {
-			final funnyBeat = (Conductor.songPosition / 1000) * (Conductor.bpm / 60);
+		switch (ClientPrefs.iconBounceType) {
+			case 'Old Psych':
+				for (i in [iconP1, iconP2])
+					i.setGraphicSize(Std.int(FlxMath.lerp(i.frameWidth, i.width, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))),
+					Std.int(FlxMath.lerp(i.frameHeight, i.height, CoolUtil.boundTo(1 - (elapsed * 30 * playbackRate), 0, 1))));
 
-			iconP1.offset.y = Math.abs(Math.sin(funnyBeat * Math.PI))  * 16 - 4;
-			iconP2.offset.y = Math.abs(Math.sin(funnyBeat * Math.PI))  * 16 - 4;
-		}
-		if (ClientPrefs.iconBounceType == 'New Psych' || ClientPrefs.iconBounceType == 'VS Steve') {
-			final mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
-			iconP1.scale.set(mult, mult);
-			iconP1.updateHitbox();
+			case 'Strident Crisis':
+				for (i in [iconP1, iconP2])
+					i.setGraphicSize(Std.int(FlxMath.lerp(i.frameWidth, i.width, 0.50 / playbackRate)),
+					Std.int(FlxMath.lerp(i.frameHeight, i.height, 0.50 / playbackRate)));
 
-			final mult:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
-			iconP2.scale.set(mult, mult);
-			iconP2.updateHitbox();
+			case 'Dave and Bambi':
+				for (i in [iconP1, iconP2])
+					i.setGraphicSize(Std.int(FlxMath.lerp(i.frameWidth, i.width, 0.8 / playbackRate)),
+					Std.int(FlxMath.lerp(i.frameHeight, i.height, 0.8 / playbackRate)));
+
+			case 'Plank Engine':
+				final funnyBeat = (Conductor.songPosition / 1000) * (Conductor.bpm / 60);
+
+				for (i in [iconP1, iconP2])
+					i.offset.y = Math.abs(Math.sin(funnyBeat * Math.PI))  * 16 - 4;
+
+			case 'New Psych', 'VS Steve':
+				for (i in [iconP1, iconP2]) {
+					final mult:Float = FlxMath.lerp(1, i.scale.x, CoolUtil.boundTo(1 - (elapsed * 9 * playbackRate), 0, 1));
+					i.scale.set(mult, mult);
+				}
 		}
 
-		if (ClientPrefs.iconBounceType == 'Golden Apple') {
-			iconP1.centerOffsets();
-			iconP2.centerOffsets();
+		for (i in [iconP1, iconP2]) {
+			if (ClientPrefs.iconBounceType == 'Golden Apple') i.centerOffsets();
+			i.updateHitbox();
 		}
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
 	}
 
 	var percent:Float = 0;
@@ -3946,33 +3935,33 @@ class PlayState extends MusicBeatState
 		switch(eventName) {
 			case 'Hey!':
 				if (ClientPrefs.charsAndBG) {
-				var value:Int = 2;
-				switch(value1.toLowerCase().trim()) {
-					case 'bf' | 'boyfriend' | '0':
-						value = 0;
-					case 'gf' | 'girlfriend' | '1':
-						value = 1;
-				}
-
-				var time:Float = Std.parseFloat(value2);
-				if(Math.isNaN(time) || time <= 0) time = 0.6;
-
-				if(value != 0) {
-					if(dad.curCharacter.startsWith('gf')) { //Tutorial GF is actually Dad! The GF is an imposter!! ding ding ding ding ding ding ding, dindinding, end my suffering
-						dad.playAnim('cheer', true);
-						dad.specialAnim = true;
-						dad.heyTimer = time;
-					} else if (gf != null) {
-						gf.playAnim('cheer', true);
-						gf.specialAnim = true;
-						gf.heyTimer = time;
+					var value:Int = 2;
+					switch(value1.toLowerCase().trim()) {
+						case 'bf' | 'boyfriend' | '0':
+							value = 0;
+						case 'gf' | 'girlfriend' | '1':
+							value = 1;
 					}
-				}
-				if(value != 1) {
-					boyfriend.playAnim('hey', true);
-					boyfriend.specialAnim = true;
-					boyfriend.heyTimer = time;
-				}
+
+					var time:Float = Std.parseFloat(value2);
+					if(Math.isNaN(time) || time <= 0) time = 0.6;
+
+					if(value != 0) {
+						if(dad.curCharacter.startsWith('gf')) { //Tutorial GF is actually Dad! The GF is an imposter!! ding ding ding ding ding ding ding, dindinding, end my suffering
+							dad.playAnim('cheer', true);
+							dad.specialAnim = true;
+							dad.heyTimer = time;
+						} else if (gf != null) {
+							gf.playAnim('cheer', true);
+							gf.specialAnim = true;
+							gf.heyTimer = time;
+						}
+					}
+					if(value != 1) {
+						boyfriend.playAnim('hey', true);
+						boyfriend.specialAnim = true;
+						boyfriend.heyTimer = time;
+					}
 				}
 
 			case 'Set GF Speed':
@@ -4023,10 +4012,9 @@ class PlayState extends MusicBeatState
 
 			case 'Credits Popup':
 			{
-				var string1:String = value1;
-				if (value1.length < 1) string1 = SONG.song;
-				var string2:String = value2;
-				if (value2.length < 1) string2 = SONG.songCredit;
+				var string1:String = (value1.length > 1 ? value1 : SONG.song);
+				var string2:String = (value2.length > 1 ? value2 : SONG.songCredit);
+				
 				var creditsPopup:CreditsPopUp = new CreditsPopUp(FlxG.width, 200, string1, string2);
 				creditsPopup.camera = camHUD;
 				creditsPopup.scrollFactor.set();
@@ -4230,12 +4218,17 @@ class PlayState extends MusicBeatState
 							boyfriend.alpha = lastAlpha;
 							if (!value2.startsWith('bf') && !value2.startsWith('boyfriend')) iconP1.changeIcon(boyfriend.healthIcon);
 							else {
-								if (ClientPrefs.bfIconStyle == 'VS Nonsense V2') iconP1.changeIcon('bfnonsense');
-								if (ClientPrefs.bfIconStyle == 'Doki Doki+') iconP1.changeIcon('bfdoki');
-								if (ClientPrefs.bfIconStyle == 'Leather Engine') iconP1.changeIcon('bfleather');
-								if (ClientPrefs.bfIconStyle == "Mic'd Up") iconP1.changeIcon('bfmup');
-								if (ClientPrefs.bfIconStyle == "FPS Plus") iconP1.changeIcon('bffps');
-								if (ClientPrefs.bfIconStyle == "OS 'Engine'") iconP1.changeIcon('bfos');
+								final iconToChange:String = switch (ClientPrefs.bfIconStyle){
+									case 'VS Nonsense V2': 'bfnonsense';
+									case 'Doki Doki+': 'bfdoki';
+									case 'Leather Engine': 'bfleather';
+									case "Mic'd Up": 'bfmup';
+									case "FPS Plus": 'bffps';
+									case "OS 'Engine'": 'bfos';
+									default: 'bf';
+								}
+								if (iconToChange != 'bf')
+									iconP1.changeIcon(iconToChange);
 							}
 							if (boyfriend.noteskin != null) bfNoteskin = boyfriend.noteskin;
 						}
@@ -5646,7 +5639,6 @@ class PlayState extends MusicBeatState
 
 			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
 			if (scoreTxtUpdateFrame <= 4) updateScore();
-			if (ClientPrefs.iconBopWhen == 'Every Note Hit' && (iconBopsThisFrame <= 2 || ClientPrefs.noBopLimit) && !note.isSustainNote && iconP1.visible) bopIcons(!oppTrigger);
 			return;
 		}
 		if (noteAlt != null)
@@ -5785,7 +5777,6 @@ class PlayState extends MusicBeatState
 			}
 			if (ClientPrefs.ratingCounter && judgeCountUpdateFrame <= 4) updateRatingCounter();
 			if (scoreTxtUpdateFrame <= 4) updateScore();
-			if (ClientPrefs.iconBopWhen == 'Every Note Hit' && (iconBopsThisFrame <= 2 || ClientPrefs.noBopLimit) && !daNote.isSustainNote && iconP2.visible) bopIcons(opponentChart);
 			return;
 		}
 		if (noteAlt != null)
@@ -6166,10 +6157,8 @@ class PlayState extends MusicBeatState
 
 	public function bopIcons(?bopBF:Bool = false)
 	{
-		iconBopsThisFrame++;
-		if (ClientPrefs.iconBopWhen == 'Every Beat')
-		{
-			if (ClientPrefs.iconBounceType == 'Dave and Bambi') {
+		switch(ClientPrefs.iconBounceType) {
+			case 'Dave and Bambi':
 				final funny:Float = Math.max(Math.min(healthBar.value,(maxHealth/0.95)),0.1);
 
 				//health icon bounce but epic
@@ -6181,149 +6170,47 @@ class PlayState extends MusicBeatState
 					iconP2.setGraphicSize(Std.int(iconP2.width + (50 * funny)),Std.int(iconP2.height - (25 * funny)));
 					iconP1.setGraphicSize(Std.int(iconP1.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP1.height - (25 * ((2 - funny) + 0.1))));
 				}
-			}
-			if (ClientPrefs.iconBounceType == 'Old Psych') {
-				iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-				iconP2.setGraphicSize(Std.int(iconP2.width + 30));
-			}
-			if (ClientPrefs.iconBounceType == 'Strident Crisis') {
+
+			case 'Old Psych':
+				for (i in [iconP1, iconP2])
+					i.setGraphicSize(Std.int(i.width + 30));
+
+			case 'Strident Crisis':
 				final funny:Float = (healthBar.percent * 0.01) + 0.01;
 
 				//health icon bounce but epic
 				iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (2 + funny))),Std.int(iconP2.height - (25 * (2 + funny))));
 				iconP2.setGraphicSize(Std.int(iconP2.width + (50 * (2 - funny))),Std.int(iconP2.height - (25 * (2 - funny))));
 
-				iconP1.scale.set(1.1, 0.8);
-				iconP2.scale.set(1.1, 0.8);
-
 				FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
 				FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
 
-				FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-				FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-			}
-			if (ClientPrefs.iconBounceType == 'Plank Engine') {
-				iconP1.scale.x = 1.3;
-				iconP1.scale.y = 0.75;
-				iconP2.scale.x = 1.3;
-				iconP2.scale.y = 0.75;
-				FlxTween.cancelTweensOf(iconP1);
-				FlxTween.cancelTweensOf(iconP2);
-				FlxTween.tween(iconP1, {"scale.x": 1, "scale.y": 1}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.backOut});
-				FlxTween.tween(iconP2, {"scale.x": 1, "scale.y": 1}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.backOut});
+				for (i in [iconP1, iconP2]) {
+					i.scale.set(1.1, 0.8);
+
+					FlxTween.tween(i, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
+				}
+
+			case 'Plank Engine':
+				for (i in [iconP1, iconP2]) {
+					i.scale.set(1.3, 0.75);
+					FlxTween.cancelTweensOf(i);
+					FlxTween.tween(i, {"scale.x": 1, "scale.y": 1}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.backOut});
+				}
 				if (curBeat % 4 == 0) {
 					iconP1.offset.x = 10;
 					iconP2.offset.x = -10;
 					iconP1.angle = -15;
 					iconP2.angle = 15;
-					FlxTween.tween(iconP1, {"offset.x": 0, angle: 0}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.expoOut});
-					FlxTween.tween(iconP2, {"offset.x": 0, angle: 0}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.expoOut});
+					for (i in [iconP1, iconP2])
+						FlxTween.tween(i, {"offset.x": 0, angle: 0}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.expoOut});
 				}
-			}
-			if (ClientPrefs.iconBounceType == 'New Psych') {
-				iconP1.scale.set(1.2, 1.2);
-				iconP2.scale.set(1.2, 1.2);
-			}
+			case 'New Psych':
+				for (i in [iconP1, iconP2])
+					i.scale.set(1.2, 1.2);
 
-			if (curBeat % gfSpeed == 0 && ClientPrefs.iconBounceType == 'Golden Apple') {
+			case 'Golden Apple':
 				curBeat % (gfSpeed * 2) == 0 * playbackRate ? {
-				iconP1.scale.set(1.1, 0.8);
-				iconP2.scale.set(1.1, 1.3);
-
-				FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				} : {
-					iconP1.scale.set(1.1, 1.3);
-					iconP2.scale.set(1.1, 0.8);
-
-					FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-					FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				}
-
-				FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			}
-			if (ClientPrefs.iconBounceType == 'VS Steve') {
-				if (curBeat % gfSpeed == 0)
-				{
-					curBeat % (gfSpeed * 2) == 0 ?
-					{
-						iconP1.scale.set(1.1, 0.8);
-						iconP2.scale.set(1.1, 1.3);
-					} : {
-						iconP1.scale.set(1.1, 1.3);
-						iconP2.scale.set(1.1, 0.8);
-						FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-
-					}
-
-					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-				}
-			}
-		}
-		else if (ClientPrefs.iconBopWhen == 'Every Note Hit')
-		{
-			iconBopsTotal++;
-			if (ClientPrefs.iconBounceType == 'Dave and Bambi') {
-				final funny:Float = Math.max(Math.min(healthBar.value,(maxHealth/0.95)),0.1);
-
-				//health icon bounce but epic
-				if (!opponentChart)
-				{
-					if (bopBF) iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (funny + 0.1))),Std.int(iconP1.height - (25 * funny)));
-					iconP2.setGraphicSize(Std.int(iconP2.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP2.height - (25 * ((2 - funny) + 0.1))));
-				} else {
-					if (!bopBF) iconP2.setGraphicSize(Std.int(iconP2.width + (50 * funny)),Std.int(iconP2.height - (25 * funny)));
-					else iconP1.setGraphicSize(Std.int(iconP1.width + (50 * ((2 - funny) + 0.1))),Std.int(iconP1.height - (25 * ((2 - funny) + 0.1))));
-				}
-			}
-			if (ClientPrefs.iconBounceType == 'Old Psych') {
-				if (bopBF) iconP1.setGraphicSize(Std.int(iconP1.width + 30), Std.int(iconP1.height + 30));
-				else iconP2.setGraphicSize(Std.int(iconP2.width + 30), Std.int(iconP2.height + 30));
-			}
-			if (ClientPrefs.iconBounceType == 'Strident Crisis') {
-				final funny:Float = (healthBar.percent * 0.01) + 0.01;
-
-				iconP1.setGraphicSize(Std.int(iconP1.width + (50 * (2 + funny))),Std.int(iconP2.height - (25 * (2 + funny))));
-				iconP2.setGraphicSize(Std.int(iconP2.width + (50 * (2 - funny))),Std.int(iconP2.height - (25 * (2 - funny))));
-
-				FlxTween.cancelTweensOf(iconP1);
-				FlxTween.cancelTweensOf(iconP2);
-
-				FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-				FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-
-				FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-				FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-			}
-			if (ClientPrefs.iconBounceType == 'Plank Engine') {
-				iconP1.scale.x = 1.3;
-				iconP1.scale.y = 0.75;
-				FlxTween.cancelTweensOf(iconP1);
-				FlxTween.tween(iconP1, {"scale.x": 1, "scale.y": 1}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.backOut});
-				iconP2.scale.x = 1.3;
-				iconP2.scale.y = 0.75;
-				FlxTween.cancelTweensOf(iconP2);
-				FlxTween.tween(iconP2, {"scale.x": 1, "scale.y": 1}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.backOut});
-				if (iconBopsTotal % 4 == 0) {
-					iconP1.offset.x = 10;
-					iconP1.angle = -15;
-					FlxTween.tween(iconP1, {"offset.x": 0, angle: 0}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.expoOut});
-					iconP2.offset.x = -10;
-					iconP2.angle = 15;
-					FlxTween.tween(iconP2, {"offset.x": 0, angle: 0}, Conductor.crochet / 1000 / playbackRate, {ease: FlxEase.expoOut});
-				}
-			}
-			if (ClientPrefs.iconBounceType == 'New Psych') {
-				if (bopBF) iconP1.scale.set(1.2, 1.2);
-				else iconP2.scale.set(1.2, 1.2);
-			}
-			if (ClientPrefs.iconBounceType == 'Golden Apple') {
-				FlxTween.cancelTweensOf(iconP1);
-				FlxTween.cancelTweensOf(iconP2);
-				iconBopsTotal % 2 == 0 * playbackRate ? {
 					iconP1.scale.set(1.1, 0.8);
 					iconP2.scale.set(1.1, 1.3);
 
@@ -6337,30 +6224,24 @@ class PlayState extends MusicBeatState
 					FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 				}
 
-				FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-				FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
-			}
-			if (ClientPrefs.iconBounceType == 'VS Steve') {
-				FlxTween.cancelTweensOf(iconP1);
-				FlxTween.cancelTweensOf(iconP2);
-				if (iconBopsTotal % 2 == 0)
-					{
-					iconBopsTotal % 2 == 0 ?
-					{
-						iconP1.scale.set(1.1, 0.8);
-						iconP2.scale.set(1.1, 1.3);
-					} : {
-						iconP1.scale.set(1.1, 1.3);
-						iconP2.scale.set(1.1, 0.8);
-						FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
+				for (i in [iconP1, iconP2])
+					FlxTween.tween(i, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 
-					}
+			case 'VS Steve':
+				curBeat % (gfSpeed * 2) == 0 ?
+				{
+					iconP1.scale.set(1.1, 0.8);
+					iconP2.scale.set(1.1, 1.3);
+				} : {
+					iconP1.scale.set(1.1, 1.3);
+					iconP2.scale.set(1.1, 0.8);
+					FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
+					FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
 
-					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
-					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed / playbackRate, {ease: FlxEase.quadOut});
 				}
-			}
+
+				for (i in [iconP1, iconP2])
+					FlxTween.tween(i, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 / playbackRate * gfSpeed, {ease: FlxEase.quadOut});
 		}
 		iconP1.updateHitbox();
 		iconP2.updateHitbox();
