@@ -3329,7 +3329,6 @@ class PlayState extends MusicBeatState
 
 		if (judgeCountUpdateFrame > 0) judgeCountUpdateFrame = 0;
 		if (scoreTxtUpdateFrame > 0) scoreTxtUpdateFrame = 0;
-		if (iconBopsThisFrame > 0) iconBopsThisFrame = 0;
 		if (popUpsFrame > 0) popUpsFrame = 0;
 		if (missRecalcsPerFrame > 0) missRecalcsPerFrame = 0;
 		strumsHit = [false, false, false, false, false, false, false, false];
@@ -6076,7 +6075,7 @@ class PlayState extends MusicBeatState
 			doTwist();
 		}
 
-		if (ClientPrefs.iconBopWhen == 'Every Beat' && (iconP1.visible || iconP2.visible))
+		if (iconP1.visible || iconP2.visible)
 			bopIcons();
 
 		if (ClientPrefs.charsAndBG) characterBopper(curBeat);
