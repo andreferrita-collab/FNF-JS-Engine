@@ -1,26 +1,31 @@
 V1.49.0-prerelease;
 
-Additions:
-
-TOO MANY TO LIST LMAO
-
-There's too many changes to list them here lol, you'll just have to figure those out yourself
-
-One of them being the updater has been changed to be hardcoded instead of making an temp bat file (LMMK IF THIS CAUSES ISSUES)
+NOTE: This is a pre-release version of 1.49.0. certain features might not be fully finished.
+also i didn't really do much for this update, due to lack of motivation to do coding here as well as personal issues.
 
 Removals:
 
-Removed a *LOT* of options that were useless, and could be coded in Lua anyways (Lua options coming soon still!)
-Removed Icon JSONS due to them being an piece of crap and just causing more confusion/bugs then it helped
+    Fast Note Spawning
+    Note Recycling (for now, making a new instance every time is believed to save on RAM usage.)
+    macOS no longer uses the ingame updater, due to issues.
+    Some redundant code has been removed, making the source easier to navigate, and reducing the amount of code in each function.
+    A few (no longer used) variables around the code have also been removed.
+    9 options (and 1 gameplay changer) have been removed due to either being recreatable in LUA, or not being needed.
 
-Fixes/Changes:
+Changes:
 
-Fixed the *UPDATER* being BROKEN finally OMG
+    The legacy memory counter (that accurately tracks memory usage) has been re-added.
+    The LUA backend has been completely rewritten (courtesy of @moxie-coder). it's mostly untested, but it MOSTLY works. some scripts might be broken, so be sure to point those out!
+    The font for lua traces has been changed.
+    More botplay texts have been added.
+    The engine was internally updated to use the V-Slice hxcpp instead, adding more optimization.
+    Notes now have a multAlpha variable, allowing you to change the alpha of a note without having to make 50 different spritesheets. (i'm looking at you, TheTrueAccount.)
 
-Git Commits are no longer in the version number which should fix the updater being "out of date" and it should no longer attempt to update to newer (unreleased) versions hopefully, mainly for testing reasons.
+Bug-fixes:
 
-I AM SO SORRY FOR PUSHING AN BROKEN UPDATE AND NOT FIXING IT UNTIL MONTHS LATER LOL (I was on vacation)
+    Fixed the engine crashing when attempting to load a chart made in Psych Engine 1.0
+    Fixed menu items being rendered behind the menu in the Character Editor
+    EditorPlayState got a small update
+    Fixed the updater incorrectly saying that you had to update JS Engine, even on pre-release versions.
+    Fixed health icons having.. weird cropping.
 
-MacOS now has builds for both ARM and Intel, so you can now play on both an ARM CPU and an X86 CPU (Intel), so no need to use Rosetta. (Updater isn't supported for anything but Windows, and will probably remain that way for an while).
-
-Mobile port is *DISCONTINUED CURRENTLY* since I'm busy with a lot of things and I don't have the time/resources to continue the mobile port. So for now, the mobile port will not receive any fixes/patches and will remain out of date until then.
