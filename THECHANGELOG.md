@@ -1,4 +1,4 @@
-V1.49.0-prerelease;
+1.49.0-prerelease;
 
 NOTE: This is a pre-release version of 1.49.0. certain features might not be fully finished.
 also i didn't really do much for this update, due to lack of motivation to do coding here as well as personal issues.
